@@ -48,7 +48,7 @@ function update() {
             ].join('');
 
             var label = item.querySelector('.todo-label');
-            label.addEventListener('click', function () {
+            label.addEventListener('touchstart', function () {
                 item.classList.add(CL_EDITING);
 
                 var edit = document.createElement('input');
@@ -87,12 +87,12 @@ function update() {
 
             var itemToggle = item.querySelector('.toggle input');
             itemToggle.checked = itemData.completed;
-            itemToggle.addEventListener('click', function () {
+            itemToggle.addEventListener('touchstart', function () {
                 itemData.completed = !itemData.completed;
                 update();
             }, false);
 
-            item.querySelector('.destroy').addEventListener('click', function () {
+            item.querySelector('.destroy').addEventListener('touchstart', function () {
                 data.items.splice(index, 1);
                 update();
             }, false);
@@ -152,10 +152,10 @@ window.onload = function () {
         }, false);
 
         var clearCompleted = $('.clear-completed');
-        clearCompleted.addEventListener('click', function () {
+        clearCompleted.addEventListener('touchstart', function () {
             items = []
             data.items.forEach(function (itemData, index) {
-                if (!itemData.completed) 
+                if (!itemData.completed)
                     items.push(data.items[index]);
             });
             data.items = items;
@@ -163,12 +163,16 @@ window.onload = function () {
         }, false);
 
         var toggleAll = $('.toggle-all');
-        toggleAll.addEventListener('click', function () {
-            if (toggleAll.classList.contains(CL_CHECKED))
+        toggleAll.addEventListener('touchstart', function () {
+            var completed = false;
+            if (toggleAll.classList.contains(CL_CHECKED)) {
                 toggleAll.classList.remove(CL_CHECKED);
-            else
-            toggleAll.classList.add(CL_CHECKED);
-            var completed = toggleAll.classList.contains(CL_CHECKED);
+                completed = false;
+            }
+            else {
+                toggleAll.classList.add(CL_CHECKED);
+                completed = true;
+            }
             data.items.forEach(function (itemData) {
                 itemData.completed = completed;
             });
@@ -177,7 +181,7 @@ window.onload = function () {
 
         var filters = makeArray($All('.filters li a'));
         filters.forEach(function (filter) {
-            filter.addEventListener('click', function () {
+            filter.addEventListener('touchstart', function () {
                 data.filter = filter.innerHTML;
                 filters.forEach(function (filter) {
                     filter.classList.remove(CL_SELECTED);
