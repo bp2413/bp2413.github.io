@@ -43,12 +43,22 @@ function update() {
                 '<div class="view">',
                 '  <div class="toggle"><input type="checkbox"></div>',
                 '  <div class="todo-label">' + itemData.msg + '</div>',
-                '  <div class="destroy">delete</div>',
                 '</div>'
             ].join('');
 
+            var divDestroy = document.createElement('div');
+            divDestroy.className = 'destroy';
+            divDestroy.innerHTML = 'delete';
+            divDestroy.addEventListener('click', function () {
+                data.items.splice(index, 1);
+                update();
+            }, false);
+
+            var itemView = item.querySelector('.view');
+            var itemViewHaveDestroy = false;
+
             var label = item.querySelector('.todo-label');
-            label.addEventListener('touchstart', function () {
+            label.addEventListener('click', function () {
                 item.classList.add(CL_EDITING);
 
                 var edit = document.createElement('input');
@@ -70,30 +80,72 @@ function update() {
                 }, false);
 
                 edit.addEventListener('keyup', function (ev) {
-                    if (ev.key == 'Esc') { // Esc
-                        finish();
-                    }
-                    else if (ev.key == 'Enter') {// Enter
+                    if (ev.key == 'Enter') {// Enter
                         label.innerHTML = this.value;
                         itemData.msg = this.value;
                         update();
                     }
                 }, false);
 
-                itemView = item.querySelector('.view')
-                itemView.insertBefore(edit, itemView.lastChild)
+                if (itemViewHaveDestroy) {
+                    label.setAttribute('class', 'todo-label');
+                    itemView.removeChild(divDestroy);
+                    itemViewHaveDestroy = false;
+                }
+                itemView.appendChild(edit);
                 edit.focus();
             }, false);
 
+            var startTouch;
+            var endTouch;
+            var touchHandler = {
+                start: function (ev) {
+                    console.log(ev.type, ev);
+                    startTouch = ev.touches[0];
+                },
+                end: function (ev) {
+                    console.log(ev.type, ev);
+                    endTouch = ev.changedTouches[0];
+                    var itemx1 = item.offsetLeft;
+                    var itemy1 = item.offsetTop;
+                    var itemx2 = item.offsetLeft + item.offsetWidth;
+                    var itemy2 = item.offsetTop + item.offsetHeight;
+                    if (
+                        startTouch.clientX < itemx1
+                        || startTouch.clientX > itemx2
+                        || startTouch.clientY < itemy1
+                        || startTouch.clientY > itemy2
+                        || endTouch.clientX < itemx1
+                        || endTouch.clientX > itemx2
+                        || endTouch.clientY < itemy1
+                        || endTouch.clientY > itemy2
+                    ) {
+                        return;
+                    }
+                    if (startTouch.clientX < endTouch.clientX) {
+                        if (!itemViewHaveDestroy) return;
+                        label.setAttribute('class', 'todo-label');
+                        itemView.removeChild(divDestroy);
+                        itemViewHaveDestroy = false;
+                    }
+                    else if (startTouch.clientX > endTouch.clientX) {
+                        if (itemViewHaveDestroy) return;
+                        if (item.classList.contains(CL_EDITING)) return;
+                        label.setAttribute('class', 'todo-label have-destroy')
+                        itemView.appendChild(divDestroy);
+                        itemViewHaveDestroy = true;
+                    }
+
+                }
+            }
+            item.addEventListener('touchstart', touchHandler.start)
+            item.addEventListener('touchend', touchHandler.end)
+
+
             var itemToggle = item.querySelector('.toggle input');
             itemToggle.checked = itemData.completed;
-            itemToggle.addEventListener('touchstart', function () {
+            itemToggle.addEventListener('click', function () {
                 itemData.completed = !itemData.completed;
-                update();
-            }, false);
-
-            item.querySelector('.destroy').addEventListener('touchstart', function () {
-                data.items.splice(index, 1);
                 update();
             }, false);
 
@@ -152,7 +204,7 @@ window.onload = function () {
         }, false);
 
         var clearCompleted = $('.clear-completed');
-        clearCompleted.addEventListener('touchstart', function () {
+        clearCompleted.addEventListener('click', function () {
             items = []
             data.items.forEach(function (itemData, index) {
                 if (!itemData.completed)
@@ -163,7 +215,7 @@ window.onload = function () {
         }, false);
 
         var toggleAll = $('.toggle-all');
-        toggleAll.addEventListener('touchstart', function () {
+        toggleAll.addEventListener('click', function () {
             var completed = false;
             if (toggleAll.classList.contains(CL_CHECKED)) {
                 toggleAll.classList.remove(CL_CHECKED);
@@ -181,7 +233,7 @@ window.onload = function () {
 
         var filters = makeArray($All('.filters li a'));
         filters.forEach(function (filter) {
-            filter.addEventListener('touchstart', function () {
+            filter.addEventListener('click', function () {
                 data.filter = filter.innerHTML;
                 filters.forEach(function (filter) {
                     filter.classList.remove(CL_SELECTED);

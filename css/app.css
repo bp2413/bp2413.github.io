@@ -15,7 +15,7 @@
 
 .header .toggle-all {
     width: 3.0rem;
-    height: inherit;
+    height: 2.0rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -59,9 +59,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0.4rem 0;
 }
 
 .main .todo-list li .view .todo-label {
+    flex: 10;
+    word-break: break-all;
+    padding: 0 0.5rem 0 0;
+    display: flex;
+    align-items: center;
+}
+
+.main .todo-list li .view .todo-label.have-destroy {
     flex: 8;
     word-break: break-all;
     padding: 0 0.5rem 0 0;
@@ -74,7 +83,7 @@
 }
 
 .main .todo-list li.editing .view .edit {
-    flex: 8;
+    flex: 10;
     word-break: break-all;
     padding: 0 0.5rem 0 0;
     display: flex;
@@ -88,7 +97,6 @@
     align-items: center;
     color: white;
     background-color: red;
-    padding: 0.4rem 0;
 }
 
 .footer {
