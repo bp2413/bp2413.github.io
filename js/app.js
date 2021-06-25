@@ -18,6 +18,7 @@ var guid = 0;
 var CL_COMPLETED = 'completed';
 var CL_SELECTED = 'selected';
 var CL_EDITING = 'editing';
+var CL_CHECKED = 'checked'
 
 function update() {
     model.flush();
@@ -41,12 +42,12 @@ function update() {
             item.innerHTML = [
                 '<div class="view">',
                 '  <div class="toggle"><input type="checkbox"></div>',
-                '  <div class="todo-label"><label>' + itemData.msg + '</label></div>',
+                '  <div class="todo-label">' + itemData.msg + '</div>',
                 '  <div class="destroy">delete</div>',
                 '</div>'
             ].join('');
 
-            var label = item.querySelector('.todo-label label');
+            var label = item.querySelector('.todo-label');
             label.addEventListener('click', function () {
                 item.classList.add(CL_EDITING);
 
@@ -110,9 +111,12 @@ function update() {
     var clearCompleted = $('.clear-completed');
     clearCompleted.style.visibility = completedCount > 0 ? 'visible' : 'hidden';
 
-    var toggleAll = $('.toggle-all input');
+    var toggleAll = $('.toggle-all');
     toggleAll.style.visibility = data.items.length > 0 ? 'visible' : 'hidden';
-    toggleAll.checked = data.items.length == completedCount;
+    if (data.items.length == completedCount)
+        toggleAll.classList.add(CL_CHECKED);
+    else
+        toggleAll.classList.remove(CL_CHECKED);
 
     var filters = makeArray($All('.filters li a'));
     filters.forEach(function (filter) {
@@ -158,9 +162,13 @@ window.onload = function () {
             update();
         }, false);
 
-        var toggleAll = $('.toggle-all input');
+        var toggleAll = $('.toggle-all');
         toggleAll.addEventListener('click', function () {
-            var completed = toggleAll.checked;
+            if (toggleAll.classList.contains(CL_CHECKED))
+                toggleAll.classList.remove(CL_CHECKED);
+            else
+            toggleAll.classList.add(CL_CHECKED);
+            var completed = toggleAll.classList.contains(CL_CHECKED);
             data.items.forEach(function (itemData) {
                 itemData.completed = completed;
             });
