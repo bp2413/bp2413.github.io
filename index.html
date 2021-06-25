@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>ToDoList</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+  <div class="todoapp">
+    <div class="header">
+      <div class="toggle-all">
+        <input type="checkbox">
+      </div>
+      <div class="new-todo">
+        <input type="text" placeholder="What needs to be done?" autofocus>
+      </div>
+    </div>
+
+    <div class="main">
+      <ul class="todo-list"></ul>
+    </div>
+
+    <div class="footer">
+      <div class="todo-count"></div>
+      <ul class="filters">
+        <li><a class="selected">All</a></li>
+        <li><a class="">Active</a></li>
+        <li><a class="">Completed</a></li>
+      </ul>
+      <div class="clear-completed">Clear completed</div>
+    </div>
+  </div>
+
+  <script src="js/model.js"></script>
+  <script src="js/provider-localStorage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
