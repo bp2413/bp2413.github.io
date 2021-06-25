@@ -2,8 +2,6 @@
     min-width: 320px;
     max-width: 750px;
     margin: 0 auto;
-    /* display: flex;
-    flex-direction: column; */
 }
 
 .header {
@@ -45,7 +43,6 @@
 .main {
     margin-top: 2.0rem;
     margin-bottom: 2.0rem;
-    /* flex: 1; */
 }
 
 .main .todo-list li {
@@ -66,7 +63,6 @@
 
 .main .todo-list li .view .todo-label {
     flex: 8;
-    /* white-space: pre-line; */
     word-break: break-all;
     padding: 0 0.5rem 0 0;
     display: flex;
@@ -79,7 +75,6 @@
 
 .main .todo-list li.editing .view .edit {
     flex: 8;
-    /* white-space: pre-line; */
     word-break: break-all;
     padding: 0 0.5rem 0 0;
     display: flex;

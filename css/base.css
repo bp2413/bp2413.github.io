@@ -10,7 +10,6 @@
 body {
     font: 12px/1.5 'PingFangSC-Regular', 'Microsoft YaHei', '宋体', Tahoma, Arial, sans-serif;
     color: #555;
-    /* background-color: #f7f7f7; */
 }
 
 /*去除边框*/
@@ -29,7 +28,6 @@ textarea {
 
 a {
     text-decoration: none;
-    /* color: #969696; */
     /* 取消链接高亮(移动端)  */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
