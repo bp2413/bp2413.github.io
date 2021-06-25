@@ -107,7 +107,7 @@ function update() {
     var count = $('.todo-count');
     count.innerHTML = (activeCount || 'No') + (activeCount > 1 ? ' items' : ' item') + ' left';
 
-    var clearCompleted = $('.clear-completed button');
+    var clearCompleted = $('.clear-completed');
     clearCompleted.style.visibility = completedCount > 0 ? 'visible' : 'hidden';
 
     var toggleAll = $('.toggle-all input');

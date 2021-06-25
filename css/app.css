@@ -2,15 +2,15 @@
     min-width: 320px;
     max-width: 750px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
 }
 
 .header {
     position: fixed;
     width: 100%;
-    height: 1.8rem;
-    background-color: pink;
+    height: 2.0rem;
+    background-color: skyblue;
     display: flex;
     top: 0;
 }
@@ -25,6 +25,7 @@
 }
 
 .header .toggle-all input {
+    -webkit-appearance: none;
     appearance: none;
 }
 
@@ -53,9 +54,9 @@
 }
 
 .main {
-    margin-top: 1.8rem;
-    margin-bottom: 1.8rem;
-    flex: 1;
+    margin-top: 2.0rem;
+    margin-bottom: 2.0rem;
+    /* flex: 1; */
 }
 
 .main .todo-list li {
@@ -110,8 +111,8 @@
     position: fixed;
     display: flex;
     width: 100%;
-    height: 1.8rem;
-    background-color: pink;
+    height: 2.0rem;
+    background-color: skyblue;
     bottom: 0;
     justify-content: center;
     align-items: center;
