@@ -1,8 +1,12 @@
+/* app整体设置 */
+
 .todoapp {
     min-width: 320px;
     max-width: 750px;
     margin: 0 auto;
 }
+
+/* header相关设置 */
 
 .header {
     position: fixed;
@@ -40,6 +44,8 @@
     text-indent: 0.3rem;
 }
 
+/* main相关设置 */
+
 .main {
     margin-top: 2.0rem;
     margin-bottom: 2.0rem;
@@ -68,6 +74,11 @@
     padding: 0 0.5rem 0 0;
     display: flex;
     align-items: center;
+}
+
+.main .todo-list li.completed .view .todo-label {
+    color: #d9d9d9;
+    text-decoration: line-through;
 }
 
 .main .todo-list li .view .todo-label.have-destroy {
@@ -99,6 +110,8 @@
     background-color: red;
 }
 
+/* footer相关设置 */
+
 .footer {
     position: fixed;
     display: flex;
@@ -126,9 +139,9 @@
     margin: 0 0.1rem;
 }
 
-.footer .filters li a.selected{
+.footer .filters li a.selected {
     margin: 0 0.1rem;
-    color:black;
+    color: black;
     font-weight: bold;
 }
 

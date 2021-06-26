@@ -1,3 +1,4 @@
+// common函数
 var $ = function (sel) {
     return document.querySelector(sel);
 };
@@ -14,12 +15,14 @@ var makeArray = function (likeArray) {
     return array;
 };
 
+// 全局变量
 var guid = 0;
 var CL_COMPLETED = 'completed';
 var CL_SELECTED = 'selected';
 var CL_EDITING = 'editing';
-var CL_CHECKED = 'checked'
+var CL_CHECKED = 'checked';
 
+// 更新全局
 function update() {
     model.flush();
     var data = model.data;
@@ -46,6 +49,13 @@ function update() {
                 '</div>'
             ].join('');
 
+            var itemView = item.querySelector('.view');
+            var itemViewHaveDestroy = false;
+
+            var label = item.querySelector('.todo-label');
+
+            var itemToggle = item.querySelector('.toggle input');
+
             var divDestroy = document.createElement('div');
             divDestroy.className = 'destroy';
             divDestroy.innerHTML = 'delete';
@@ -54,100 +64,19 @@ function update() {
                 update();
             }, false);
 
-            var itemView = item.querySelector('.view');
-            var itemViewHaveDestroy = false;
+            var object = {
+                itemData,
+                item,
+                itemView,
+                label,
+                itemToggle,
+                divDestroy,
+                itemViewHaveDestroy
+            };
 
-            var label = item.querySelector('.todo-label');
-            label.addEventListener('click', function () {
-                item.classList.add(CL_EDITING);
-
-                var edit = document.createElement('input');
-                var finished = false;
-                edit.setAttribute('type', 'text');
-                edit.setAttribute('class', 'edit');
-                edit.setAttribute('value', label.innerHTML);
-
-                function finish() {
-                    if (finished) return;
-                    finished = true;
-                    itemView = item.querySelector('.view')
-                    itemView.removeChild(edit);
-                    item.classList.remove(CL_EDITING);
-                }
-
-                edit.addEventListener('blur', function () {
-                    finish();
-                }, false);
-
-                edit.addEventListener('keyup', function (ev) {
-                    if (ev.key == 'Enter') {// Enter
-                        label.innerHTML = this.value;
-                        itemData.msg = this.value;
-                        update();
-                    }
-                }, false);
-
-                if (itemViewHaveDestroy) {
-                    label.setAttribute('class', 'todo-label');
-                    itemView.removeChild(divDestroy);
-                    itemViewHaveDestroy = false;
-                }
-                itemView.appendChild(edit);
-                edit.focus();
-            }, false);
-
-            var startTouch;
-            var endTouch;
-            var touchHandler = {
-                start: function (ev) {
-                    console.log(ev.type, ev);
-                    startTouch = ev.touches[0];
-                },
-                end: function (ev) {
-                    console.log(ev.type, ev);
-                    endTouch = ev.changedTouches[0];
-                    var itemx1 = item.offsetLeft;
-                    var itemy1 = item.offsetTop;
-                    var itemx2 = item.offsetLeft + item.offsetWidth;
-                    var itemy2 = item.offsetTop + item.offsetHeight;
-                    if (
-                        startTouch.clientX < itemx1
-                        || startTouch.clientX > itemx2
-                        || startTouch.clientY < itemy1
-                        || startTouch.clientY > itemy2
-                        || endTouch.clientX < itemx1
-                        || endTouch.clientX > itemx2
-                        || endTouch.clientY < itemy1
-                        || endTouch.clientY > itemy2
-                    ) {
-                        return;
-                    }
-                    if (startTouch.clientX < endTouch.clientX) {
-                        if (!itemViewHaveDestroy) return;
-                        label.setAttribute('class', 'todo-label');
-                        itemView.removeChild(divDestroy);
-                        itemViewHaveDestroy = false;
-                    }
-                    else if (startTouch.clientX > endTouch.clientX) {
-                        if (itemViewHaveDestroy) return;
-                        if (item.classList.contains(CL_EDITING)) return;
-                        label.setAttribute('class', 'todo-label have-destroy')
-                        itemView.appendChild(divDestroy);
-                        itemViewHaveDestroy = true;
-                    }
-
-                }
-            }
-            item.addEventListener('touchstart', touchHandler.start)
-            item.addEventListener('touchend', touchHandler.end)
-
-
-            var itemToggle = item.querySelector('.toggle input');
-            itemToggle.checked = itemData.completed;
-            itemToggle.addEventListener('click', function () {
-                itemData.completed = !itemData.completed;
-                update();
-            }, false);
+            initLabel(object);
+            initDestroy(object);
+            initToggle(object);
 
             todoList.insertBefore(item, todoList.firstChild);
         }
@@ -156,6 +85,108 @@ function update() {
     var newTodo = $('.new-todo input');
     newTodo.value = data.msg;
 
+    updateFooter(data, activeCount);
+}
+
+// 初始化label
+function initLabel(object) {
+    object.label.addEventListener('click', function () {
+        object.item.classList.add(CL_EDITING);
+
+        var edit = document.createElement('input');
+        var finished = false;
+        edit.setAttribute('type', 'text');
+        edit.setAttribute('class', 'edit');
+        edit.setAttribute('value', object.label.innerHTML);
+
+        function finish() {
+            if (finished) return;
+            finished = true;
+            object.itemView = object.item.querySelector('.view')
+            object.itemView.removeChild(edit);
+            object.item.classList.remove(CL_EDITING);
+        }
+
+        edit.addEventListener('blur', function () {
+            finish();
+        }, false);
+
+        edit.addEventListener('keyup', function (ev) {
+            if (ev.key == 'Enter') {// Enter
+                object.label.innerHTML = this.value;
+                object.itemData.msg = this.value;
+                update();
+            }
+        }, false);
+
+        // 如果已经显示出了删除按钮，但是想编辑，则将删除按钮删除
+        if (object.itemViewHaveDestroy) {
+            object.label.setAttribute('class', 'todo-label');
+            object.itemView.removeChild(object.divDestroy);
+            object.itemViewHaveDestroy = false;
+        }
+        object.itemView.appendChild(edit);
+        edit.focus();
+    }, false);
+}
+
+// 初始化destroy，删除按钮，完成滑动操作
+function initDestroy(object) {
+    var startTouch;
+    var endTouch;
+    var touchHandler = {
+        start: function (ev) {
+            startTouch = ev.touches[0];
+        },
+        end: function (ev) {
+            endTouch = ev.changedTouches[0];
+            var itemx1 = object.item.offsetLeft;
+            var itemy1 = object.item.offsetTop;
+            var itemx2 = object.item.offsetLeft + object.item.offsetWidth;
+            var itemy2 = object.item.offsetTop + object.item.offsetHeight;
+            if (
+                startTouch.clientX < itemx1
+                || startTouch.clientX > itemx2
+                || startTouch.clientY < itemy1
+                || startTouch.clientY > itemy2
+                || endTouch.clientX < itemx1
+                || endTouch.clientX > itemx2
+                || endTouch.clientY < itemy1
+                || endTouch.clientY > itemy2
+            ) {
+                return;
+            }
+            if (startTouch.clientX < endTouch.clientX) {
+                if (!object.itemViewHaveDestroy) return;
+                object.label.setAttribute('class', 'todo-label');
+                object.itemView.removeChild(object.divDestroy);
+                object.itemViewHaveDestroy = false;
+            }
+            else if (startTouch.clientX > endTouch.clientX) {
+                if (object.itemViewHaveDestroy) return;
+                if (object.item.classList.contains(CL_EDITING)) return;
+                object.label.setAttribute('class', 'todo-label have-destroy')
+                object.itemView.appendChild(object.divDestroy);
+                object.itemViewHaveDestroy = true;
+            }
+
+        }
+    }
+    object.item.addEventListener('touchstart', touchHandler.start);
+    object.item.addEventListener('touchend', touchHandler.end);
+}
+
+// 初始化toggle
+function initToggle(object) {
+    object.itemToggle.checked = object.itemData.completed;
+    object.itemToggle.addEventListener('click', function () {
+        object.itemData.completed = !object.itemData.completed;
+        update();
+    }, false);
+}
+
+// 更新footer
+function updateFooter(data, activeCount) {
     var completedCount = data.items.length - activeCount;
     var count = $('.todo-count');
     count.innerHTML = (activeCount || 'No') + (activeCount > 1 ? ' items' : ' item') + ' left';
@@ -177,6 +208,7 @@ function update() {
     });
 }
 
+// 初始化
 window.onload = function () {
     model.init(function () {
         var data = model.data;
@@ -205,6 +237,7 @@ window.onload = function () {
 
         var clearCompleted = $('.clear-completed');
         clearCompleted.addEventListener('click', function () {
+            // 将没有完成的任务都放到items里，再设置给model
             items = []
             data.items.forEach(function (itemData, index) {
                 if (!itemData.completed)
@@ -216,6 +249,7 @@ window.onload = function () {
 
         var toggleAll = $('.toggle-all');
         toggleAll.addEventListener('click', function () {
+            // 每次点击toggleAll都更改状态，即添加checked类
             var completed = false;
             if (toggleAll.classList.contains(CL_CHECKED)) {
                 toggleAll.classList.remove(CL_CHECKED);
